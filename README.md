@@ -1,15 +1,11 @@
-#### HAI708I - Big Data
+# HAI708I - Big Data
 
-### TP Hadoop
+## TP Hadoop
 
-Ce TP a pour objectif de vous familiariser avec les plateformes de Big Data afin de comprendre les principes fondamentaux du fonctionnement de ces systèmes reposant sur une parallélisation massive.
+Ce TP a pour objectif de nous familiariser avec les plateformes de Big Data afin de comprendre les principes fondamentaux du fonctionnement de ces systèmes reposant sur une parallélisation massive.
 
 En réalisant ce TP, vous serez mieux préparés à tirer pleinement parti des séminaires industriels sur le Big Data, dans lesquels ces concepts sont évoqués.
 
-Enfin, les exercices proposés constituent également une bonne préparation pour l'examen ;-)
-
-
-## Il est important de lire tout le document.
 
 ## Ressources
 
