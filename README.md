@@ -6,16 +6,7 @@ Ce TP a pour objectif de vous familiariser avec les plateformes de Big Data afin
 
 En réalisant ce TP, vous serez mieux préparés à tirer pleinement parti des séminaires industriels sur le Big Data, dans lesquels ces concepts sont évoqués.
 
-
-## Ressources
-
-- [MR1] MapReduce: Simplified Data Processing on Large Clusters - Jeffrey Dean and Sanjay Ghemawat
-- [MR2] Apache Hadoop http://hadoop.apache.org/
-- [MR3] Hadoop: the definitive guide (http://grut-computing.com/HadoopBook.pdf)
-
-## Avant commencer
-
-La programmation en Map-Reduce utilise le langage Java - avec ses avantages et inconvénients. Il est ainsi indispensable d'effectuer ce travail en binômes, de rester bien concentrés pour bien comprendre la cause des bogues (souvent ce seront des problèmes de typage ou nommage des ressources).  
+#### Voici les exercices qui ont été abordés lors de ce TP
 
 ## Exercices de préparation - Partie 1
 
