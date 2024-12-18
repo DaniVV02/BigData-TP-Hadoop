@@ -213,7 +213,7 @@ class Reduce extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
 		while (i-- != 0) {
 			Double profit = profits[i];
 
-			// Pour chaque client avec ce profit, on l'émet
+			// Pour chaque client avec ce profit
 			for (Text client : sortedProfits.get(profit)) {
 				context.write(client, new DoubleWritable(profit));
 			}

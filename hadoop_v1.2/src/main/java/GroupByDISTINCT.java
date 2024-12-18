@@ -42,7 +42,7 @@ public class GroupByDISTINCT {
             String line = value.toString();
             String[] fields = line.split(",");
 
-            // Vérification que la ligne contient suffisamment de champs
+            // verif que la ligne contient suffisamment de champs
             if (fields.length > 6) {
                 String customerName = fields[6]; // Customer Name
                 context.write(new Text(customerName), NullWritable.get());
@@ -53,7 +53,7 @@ public class GroupByDISTINCT {
     public static class DistinctReducer extends Reducer<Text, NullWritable, Text, NullWritable> {
         @Override
         protected void reduce(Text key, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException {
-            // Écrire simplement la clé unique en sortie
+            // on ecrit simplement la clé unique en sortie
             context.write(key, NullWritable.get());
         }
     }

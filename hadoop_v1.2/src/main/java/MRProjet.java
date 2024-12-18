@@ -214,7 +214,7 @@ public class MRProjet {
         job2.setOutputKeyClass(Text.class);
         job2.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(job2, new Path(INPUT_PATH + "datamart1.csv"));
-        FileOutputFormat.setOutputPath(job2, new Path(OUTPUT_PATH + "req2DistinctMapper-" + Instant.now().getEpochSecond()));
+        FileOutputFormat.setOutputPath(job2, new Path(OUTPUT_PATH + "req2-" + Instant.now().getEpochSecond()));
         job2.waitForCompletion(true);
 
         // Job pour 3e requete du 1er datamart
