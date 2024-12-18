@@ -63,13 +63,14 @@ class TextInverseComparator extends InverseComparator<Text> {
 }
 
 
+
 // =========================================================================
 // CLASSE MAIN
 // =========================================================================
 
 public class TriAvecComparaison {
 	private static final String INPUT_PATH = "input-groupBy/";
-	private static final String OUTPUT_PATH = "output/9-TriAvecComparaison-";
+	private static final String OUTPUT_PATH = "output/9-TriAvecComparaisonDECROISSANT-";
 	private static final Logger LOG = Logger.getLogger(TriAvecComparaison.class.getName());
 
 	static {
@@ -93,6 +94,23 @@ public class TriAvecComparaison {
 
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+
+			String line = value.toString();
+			String[] fields = line.split(",");
+
+			if (fields.length > 20) {
+				String shipDate = fields[3];
+				String orderDetails = fields[1] + "," + fields[6]; // Order ID et Customer Name
+				try {
+					// Conversion de M/D/Y à YYYY-MM-DD
+					String[] dateParts = shipDate.split("/");
+					String isoDate = String.format("20%s-%02d-%02d", dateParts[2], Integer.parseInt(dateParts[0]), Integer.parseInt(dateParts[1]));
+					context.write(new Text(isoDate), new Text(orderDetails));
+				} catch (Exception e) {
+					// on ignor les lignes mal formatées
+				}
+			}
+
 		}
 	}
 
@@ -100,9 +118,12 @@ public class TriAvecComparaison {
 	// REDUCER
 	// =========================================================================
 
-	public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+	public static class Reduce extends Reducer<Text, Text, Text, Text> {
 
-		public void reduce(Text key, Iterable<IntWritable> values, Context context) {
+		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException{
+			for (Text value : values) {
+				context.write(key, value);
+			}
 		}
 	}
 
@@ -119,12 +140,16 @@ public class TriAvecComparaison {
 		 * Affectation de la classe du comparateur au job.
 		 * Celui-ci sera appelé durant la phase de shuffle.
 		 */
+
+		// Pour tri décroissant, le mettre en commentaire si tri croissant
 		job.setSortComparatorClass(TextInverseComparator.class);
-		
+
+
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 
 		job.setMapperClass(Map.class);
+		job.setReducerClass(Reduce.class);
 
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);

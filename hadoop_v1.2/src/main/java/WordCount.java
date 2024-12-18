@@ -64,8 +64,13 @@ public class WordCount {
 			if (Arrays.equals(words, emptyWords))
 				return;
 
-			for (String word : words)
-				context.write(new Text(word), one);
+			for (String word : words) {
+				String cleanedWord = word.replaceAll("[^a-zA-Z0-9]", ""); // Conserve lettres et chiffres
+				if (!cleanedWord.isEmpty()) {
+					context.write(new Text(cleanedWord.toLowerCase()), one);
+				}
+				//context.write(new Text(word), one);
+			}
 		}
 	}
 

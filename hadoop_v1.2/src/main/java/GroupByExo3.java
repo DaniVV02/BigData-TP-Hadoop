@@ -9,7 +9,6 @@ import java.util.logging.SimpleFormatter;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -20,10 +19,10 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
-public class GroupBy {
+public class GroupByExo3 {
 	private static final String INPUT_PATH = "input-groupBy/";
-	private static final String OUTPUT_PATH = "output/groupBy-";
-	private static final Logger LOG = Logger.getLogger(GroupBy.class.getName());
+	private static final String OUTPUT_PATH = "output/groupByExo3-";
+	private static final Logger LOG = Logger.getLogger(GroupByExo3.class.getName());
 
 	static {
 		System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s%n%6$s");
@@ -51,9 +50,9 @@ public class GroupBy {
 				String state = columns[10];      // Column 11: State
 				String category = columns[14];   // Column 15: Category
 				String orderId = columns[1];     // Column 2: Order ID
-				String productId = columns[13];  // Column 16: Product ID
-				String salesStr = columns[17];   // Column 19: Sales
-				String quantityStr = columns[18];// Column 20: Quantity
+				String productId = columns[13];  // Column 14: Product ID
+				String salesStr = columns[17];   // Column 18: Sales
+				String quantityStr = columns[18];// Column 19: Quantity
 
 				try {
 					// sales by (Date, State)
