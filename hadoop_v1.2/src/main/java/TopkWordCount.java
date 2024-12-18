@@ -8,9 +8,12 @@ import java.util.TreeMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.io.IOException;
+
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -21,6 +24,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
 
 
 /*
@@ -34,6 +38,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 // MAPPER
 // =========================================================================
 
+/*
 class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
 	private final static IntWritable one = new IntWritable(1);
 	private final static String emptyWords[] = { "" };
@@ -50,21 +55,53 @@ class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
 		for (String word : words)
 			context.write(new Text(word), one);
 	}
+
+}
+ */
+
+class Map extends Mapper<LongWritable, Text, Text, DoubleWritable> {
+
+	@Override
+	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+		if (key.get() == 0) return;
+
+		String line = value.toString();
+		String[] fields = line.split(",");
+
+		// Exemple de champ dans le CSV : "clientId, profit, nomClient"
+		if (fields.length > 20) {
+			String clientId = fields[5];
+			String profitStr = fields[20];
+			try {
+				double profit = Double.parseDouble(profitStr);
+				context.write(new Text(clientId), new DoubleWritable(profit));
+			} catch (NumberFormatException e) {
+				System.err.println("Invalid number format for line: " + line);
+			}
+		}
+	}
 }
 
 // =========================================================================
 // REDUCER
 // =========================================================================
 
-class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+//class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+class Reduce extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
 	/**
 	 * Map avec tri suivant l'ordre naturel de la clé (la clé représentant la fréquence d'un ou plusieurs mots).
 	 * Utilisé pour conserver les k mots les plus fréquents.
 	 * 
 	 * Il associe une fréquence à une liste de mots.
 	 */
+	/*
 	private TreeMap<Integer, List<Text>> sortedWords = new TreeMap<>();
 	private int nbsortedWords = 0;
+	private int k;
+	 */
+
+	private TreeMap<Double, List<Text>> sortedProfits = new TreeMap<>();
+	private int nbsortedProfits = 0;
 	private int k;
 
 	/**
@@ -73,9 +110,11 @@ class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 	@Override
 	public void setup(Context context) {
 		// On charge k
-		k = context.getConfiguration().getInt("k", 1);
+		// k = context.getConfiguration().getInt("k", 1);
+		k = context.getConfiguration().getInt("k", 10); // Récupère k
 	}
 
+	/*
 	@Override
 	public void reduce(Text key, Iterable<IntWritable> values, Context context)
 			throws IOException, InterruptedException {
@@ -108,12 +147,46 @@ class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 		} else
 			nbsortedWords++;
 	}
+	 */
+
+	@Override
+	public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException {
+		double totalProfit = 0.0;
+
+		for (DoubleWritable val : values) {
+			totalProfit += val.get();
+		}
+
+		// Si la clé (clientId) est déjà présente dans le TreeMap, on ajoute le profit.
+		// Sinon, on crée une nouvelle entrée.
+		if (sortedProfits.containsKey(totalProfit)) {
+			sortedProfits.get(totalProfit).add(new Text(key));
+		} else {
+			List<Text> clients = new ArrayList<>();
+			clients.add(new Text(key));
+			sortedProfits.put(totalProfit, clients);
+		}
+
+		// On garde uniquement les k premiers
+		if (nbsortedProfits == k) {
+			Double firstKey = sortedProfits.firstKey();
+			List<Text> clients = sortedProfits.get(firstKey);
+			clients.remove(clients.size() - 1); // On enlève le dernier client dans la liste
+
+			if (clients.isEmpty()) {
+				sortedProfits.remove(firstKey);
+			}
+		} else {
+			nbsortedProfits++;
+		}
+	}
 
 	/**
 	 * Méthode appelée à la fin de l'étape de reduce.
 	 * 
 	 * Ici on envoie les mots dans la sortie, triés par ordre descendant.
 	 */
+	/*
 	@Override
 	public void cleanup(Context context) throws IOException, InterruptedException {
 		Integer[] nbofs = sortedWords.keySet().toArray(new Integer[0]);
@@ -128,11 +201,29 @@ class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 				context.write(words, new IntWritable(nbof));
 		}
 	}
+	*/
+
+
+	@Override
+	public void cleanup(Context context) throws IOException, InterruptedException {
+		// On parcourt le TreeMap dans l'ordre descendant des profits
+		Double[] profits = sortedProfits.keySet().toArray(new Double[0]);
+		int i = profits.length;
+
+		while (i-- != 0) {
+			Double profit = profits[i];
+
+			// Pour chaque client avec ce profit, on l'émet
+			for (Text client : sortedProfits.get(profit)) {
+				context.write(client, new DoubleWritable(profit));
+			}
+		}
+	}
 }
 
 public class TopkWordCount {
-	private static final String INPUT_PATH = "input-wordCount/";
-	private static final String OUTPUT_PATH = "output/TopkWordCount-";
+	private static final String INPUT_PATH = "input-groupBy/";
+	private static final String OUTPUT_PATH = "output/TopkExo10-";
 	private static final Logger LOG = Logger.getLogger(TopkWordCount.class.getName());
 
 	static {
@@ -173,10 +264,10 @@ public class TopkWordCount {
 		Configuration conf = new Configuration();
 		conf.setInt("k", k);
 
-		Job job = new Job(conf, "wordcount");
+		Job job = new Job(conf, "TopkProfit");
 
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setOutputValueClass(DoubleWritable.class);
 
 		job.setMapperClass(Map.class);
 		job.setReducerClass(Reduce.class);

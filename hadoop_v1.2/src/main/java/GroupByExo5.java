@@ -21,7 +21,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 public class GroupByExo5 {
     private static final String INPUT_PATH = "input-groupBy/";
     private static final String OUTPUT_PATH = "output/groupByExo5-";
-    private static final Logger LOG = Logger.getLogger(GroupByExo3.class.getName());
+    private static final Logger LOG = Logger.getLogger(GroupByExo5.class.getName());
 
     static {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s%n%6$s");

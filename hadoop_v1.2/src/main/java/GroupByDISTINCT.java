@@ -22,7 +22,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 public class GroupByDISTINCT {
     private static final String INPUT_PATH = "input-groupBy/";
     private static final String OUTPUT_PATH = "output/groupByDISTINCT-";
-    private static final Logger LOG = Logger.getLogger(GroupByExo3.class.getName());
+    private static final Logger LOG = Logger.getLogger(GroupByDISTINCT.class.getName());
 
     static {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s%n%6$s");
