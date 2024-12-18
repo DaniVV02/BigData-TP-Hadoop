@@ -2,7 +2,7 @@
 
 ## TP Hadoop
 
-Ce TP a pour objectif de nous familiariser avec les plateformes de Big Data afin de comprendre les principes fondamentaux du fonctionnement de ces systèmes reposant sur une parallélisation massive.
+Ce TP a pour objectif de vous familiariser avec les plateformes de Big Data afin de comprendre les principes fondamentaux du fonctionnement de ces systèmes reposant sur une parallélisation massive.
 
 En réalisant ce TP, vous serez mieux préparés à tirer pleinement parti des séminaires industriels sur le Big Data, dans lesquels ces concepts sont évoqués.
 
@@ -61,4 +61,35 @@ SELECT * FROM change_this_table_name;
 -- dernière commande avant de fermer la connexion
 SPOOL OFF;
 ```
+
+### Exercice 5 - GroupBy + Join
+
+Pour le fichier `superstore.csv`, calculer le montant total des achats faits par chaque client.  
+**Le programme doit restituer des couples** `(CUSTOMERS.name, SUM(totalprice))`.
+
+---
+
+### Exercice 6 - Suppression des doublons (DISTINCT)
+
+Donner la liste des clients (sans doublons) présents dans le dataset du répertoire `input-groupBy`.
+
+---
+
+### Exercice 7 - MR <-> SQL
+
+Donner le code SQL équivalent aux traitements Map/Reduce implémentés pour les questions 4, 5 et 6.
+
+### Exercice 9 - Tri
+
+Hadoop trie les clés des groupes en ordre lexicographique ascendant pendant la phase de shuffling. Modifier la méthode de tri.  
+1. Trier les commandes clients du fichier `superstore.csv` par date d’expédition en ordre croissant, puis décroissant.  
+2. Trier les clients (identifiant + nom) par profit généré.
+
+---
+
+### Exercice 10 - Requêtes Top-k
+
+Modifier la classe `TopkWordCount.java` pour répondre aux requêtes suivantes :  
+1. Les k premières lignes triées par profit (ordre décroissant).  
+2. Les k premiers clients en termes de profit réalisé (ordre décroissant).
 
